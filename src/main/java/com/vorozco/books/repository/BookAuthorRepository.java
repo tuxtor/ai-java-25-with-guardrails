@@ -33,10 +33,6 @@ public class BookAuthorRepository {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public BookAuthor save(BookAuthor bookAuthor) {
-        if (em.find(BookAuthor.class, bookAuthor.getId()) == null) {
-            em.persist(bookAuthor);
-            return bookAuthor;
-        }
         return em.merge(bookAuthor);
     }
 

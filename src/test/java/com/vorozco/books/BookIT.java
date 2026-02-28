@@ -83,7 +83,7 @@ class BookIT extends AbstractOracleIT {
 
     @Test
     @Order(3)
-    void createHombresDeMailz() {
+    void createHombresDeMaiz() {
         Book book = new Book();
         book.setIsbn("978-84-376-0620-0");
         book.setTitle("Hombres de Maíz");

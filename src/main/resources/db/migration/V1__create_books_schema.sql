@@ -53,6 +53,7 @@ CREATE TABLE CATEGORY (
 CREATE TABLE BOOK_CATEGORY (
     book_id     NUMBER       NOT NULL,
     category_id NUMBER       NOT NULL,
+    -- is_primary: 0 = false (not primary category), 1 = true (primary category)
     is_primary  NUMBER(1, 0) DEFAULT 0,
     CONSTRAINT pk_book_category PRIMARY KEY (book_id, category_id),
     CONSTRAINT fk_bc_book       FOREIGN KEY (book_id)     REFERENCES BOOK(book_id),

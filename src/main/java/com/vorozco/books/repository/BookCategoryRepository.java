@@ -33,10 +33,6 @@ public class BookCategoryRepository {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public BookCategory save(BookCategory bookCategory) {
-        if (em.find(BookCategory.class, bookCategory.getId()) == null) {
-            em.persist(bookCategory);
-            return bookCategory;
-        }
         return em.merge(bookCategory);
     }
 
