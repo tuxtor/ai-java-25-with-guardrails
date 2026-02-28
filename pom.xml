@@ -173,6 +173,11 @@
             <artifactId>flyway-core</artifactId>
             <version>10.22.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-oracle</artifactId>
+            <version>10.22.0</version>
+        </dependency>
         <!-- DataFaker - test data generation -->
         <dependency>
             <groupId>net.datafaker</groupId>
