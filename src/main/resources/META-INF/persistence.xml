@@ -8,9 +8,16 @@
         <jta-data-source>ds</jta-data-source>
         <class>com.vorozco.books.Pokemon</class>
         <class>com.vorozco.books.PokemonType</class>
+        <class>com.vorozco.books.model.Book</class>
+        <class>com.vorozco.books.model.Author</class>
+        <class>com.vorozco.books.model.Category</class>
+        <class>com.vorozco.books.model.BookAuthor</class>
+        <class>com.vorozco.books.model.BookAuthorId</class>
+        <class>com.vorozco.books.model.BookCategory</class>
+        <class>com.vorozco.books.model.BookCategoryId</class>
         <properties>
             <property name="hibernate.column_ordering_strategy" value="legacy"/>
-            <property name="jakarta.persistence.sql-load-script-source" value="META-INF/init_script.sql"/>
+            <property name="hibernate.hbm2ddl.auto" value="none"/>
         </properties>
     </persistence-unit>
 </persistence>
