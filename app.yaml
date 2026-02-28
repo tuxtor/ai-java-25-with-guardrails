@@ -1,0 +1,37 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ai-java-25-books
+  labels:
+    app: ai-java-25-books
+spec:
+  type: ClusterIP
+  selector:
+    app: ai-java-25-books
+  ports:
+    - name: tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ai-java-25-books
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-java-25-books
+  template:
+    metadata:
+      labels:
+        app: ai-java-25-books
+        version: v1
+    spec:
+      containers:
+      - name: ai-java-25-books
+        image: ai-java-25-books
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080

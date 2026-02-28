@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ai-java-25-books" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="io.helidon.Main" />
+    <module name="ai-java-25-books" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
