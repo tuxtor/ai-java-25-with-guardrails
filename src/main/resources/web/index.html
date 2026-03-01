@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books Library Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+<header class="bg-indigo-700 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+        <h1 class="text-2xl font-bold tracking-wide">Books Library Manager</h1>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 py-6">
+
+    <!-- Tabs -->
+    <div class="mb-6 border-b border-gray-300">
+        <nav class="flex gap-1">
+            <button id="tab-book" class="tab-btn px-5 py-2 text-sm font-medium rounded-t-lg border-b-2 border-indigo-600 bg-white text-indigo-700">
+                📚 Books
+            </button>
+            <button id="tab-author" class="tab-btn px-5 py-2 text-sm font-medium rounded-t-lg border-b-2 border-transparent text-gray-500 hover:text-indigo-600">
+                ✍️ Authors
+            </button>
+            <button id="tab-category" class="tab-btn px-5 py-2 text-sm font-medium rounded-t-lg border-b-2 border-transparent text-gray-500 hover:text-indigo-600">
+                🗂️ Categories
+            </button>
+        </nav>
+    </div>
+
+    <!-- ===== BOOKS TAB ===== -->
+    <div id="pane-book" class="tab-pane">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-700">Books</h2>
+            <button id="add-book" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition">
+                + Add Book
+            </button>
+        </div>
+        <div class="bg-white shadow rounded-lg overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">ID</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Title</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">ISBN</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Edition</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Language</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Published</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Actions</th>
+                </tr>
+                </thead>
+                <tbody id="book-table-body" class="divide-y divide-gray-100"></tbody>
+            </table>
+        </div>
+        <p id="book-empty" class="text-gray-500 text-center py-6 hidden">No books found.</p>
+    </div>
+
+    <!-- ===== AUTHORS TAB ===== -->
+    <div id="pane-author" class="tab-pane hidden">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-700">Authors</h2>
+            <button id="add-author" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition">
+                + Add Author
+            </button>
+        </div>
+        <div class="bg-white shadow rounded-lg overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">ID</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Display Name</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Given Name</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Family Name</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Birth Date</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Actions</th>
+                </tr>
+                </thead>
+                <tbody id="author-table-body" class="divide-y divide-gray-100"></tbody>
+            </table>
+        </div>
+        <p id="author-empty" class="text-gray-500 text-center py-6 hidden">No authors found.</p>
+    </div>
+
+    <!-- ===== CATEGORIES TAB ===== -->
+    <div id="pane-category" class="tab-pane hidden">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-700">Categories</h2>
+            <button id="add-category" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition">
+                + Add Category
+            </button>
+        </div>
+        <div class="bg-white shadow rounded-lg overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">ID</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Code</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Name</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Description</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Parent ID</th>
+                    <th class="px-4 py-3 text-left font-medium text-gray-500">Actions</th>
+                </tr>
+                </thead>
+                <tbody id="category-table-body" class="divide-y divide-gray-100"></tbody>
+            </table>
+        </div>
+        <p id="category-empty" class="text-gray-500 text-center py-6 hidden">No categories found.</p>
+    </div>
+
+</main>
+
+<!-- ===== MODAL ===== -->
+<div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4">
+        <div class="flex justify-between items-center px-6 py-4 border-b">
+            <h3 id="modal-title" class="text-lg font-semibold text-gray-800">Add / Edit</h3>
+            <button id="modal-close" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+        </div>
+        <form id="modal-form" class="px-6 py-4 space-y-4">
+            <input type="hidden" id="form-id"/>
+            <input type="hidden" id="form-entity-type"/>
+            <div id="form-fields"></div>
+            <div class="flex justify-end gap-3 pt-2">
+                <button type="button" id="modal-cancel"
+                        class="px-4 py-2 rounded-lg border text-sm text-gray-600 hover:bg-gray-100 transition">Cancel</button>
+                <button type="submit"
+                        class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm hover:bg-indigo-700 transition">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast" class="fixed bottom-6 right-6 text-white px-5 py-3 rounded-lg shadow-lg text-sm z-50 hidden"></div>
+
+<script>
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+/** Returns the REST API path segment for a singular entity name. */
+function apiPath(entity) {
+    return entity === 'category' ? 'categories' : entity + 's';
+}
+
+/** Returns the primary-key field name for a singular entity name. */
+function idField(entity) {
+    return entity + 'Id';
+}
+
+/** HTML-escape a value to prevent XSS when inserting into innerHTML. */
+function escapeHtml(val) {
+    if (val == null) return '';
+    return String(val)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// ─── Tab management ───────────────────────────────────────────────────────────
+
+let currentEntity = 'book';
+
+function showTab(name) {
+    currentEntity = name;
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('border-indigo-600', 'bg-white', 'text-indigo-700');
+        b.classList.add('border-transparent', 'text-gray-500');
+    });
+    document.getElementById('pane-' + name).classList.remove('hidden');
+    const btn = document.getElementById('tab-' + name);
+    btn.classList.add('border-indigo-600', 'bg-white', 'text-indigo-700');
+    btn.classList.remove('border-transparent', 'text-gray-500');
+    loadData(name);
+}
+
+document.getElementById('tab-book').addEventListener('click', () => showTab('book'));
+document.getElementById('tab-author').addEventListener('click', () => showTab('author'));
+document.getElementById('tab-category').addEventListener('click', () => showTab('category'));
+
+// ─── Data loading (uses fetch to retrieve JSON) ───────────────────────────────
+
+async function loadData(entity) {
+    try {
+        const res = await fetch('/' + apiPath(entity));
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const items = await res.json();
+        renderTable(entity, items);
+    } catch (e) {
+        showToast('Error loading ' + apiPath(entity) + ': ' + e.message, true);
+    }
+}
+
+// ─── Table rendering ──────────────────────────────────────────────────────────
+
+function renderTable(entity, items) {
+    const tbody = document.getElementById(entity + '-table-body');
+    const empty = document.getElementById(entity + '-empty');
+    tbody.innerHTML = '';
+    if (!items || items.length === 0) {
+        empty.classList.remove('hidden');
+        return;
+    }
+    empty.classList.add('hidden');
+    items.forEach(item => tbody.appendChild(buildRow(entity, item)));
+}
+
+function buildRow(entity, item) {
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-gray-50';
+    const id = item[idField(entity)];
+
+    // Build data cells
+    const td = (content, extraClass) => {
+        const cell = document.createElement('td');
+        cell.className = 'px-4 py-3 ' + (extraClass || 'text-gray-600');
+        cell.textContent = content ?? '';
+        return cell;
+    };
+
+    if (entity === 'book') {
+        tr.appendChild(td(id, 'text-gray-500'));
+        tr.appendChild(td(item.title, 'font-medium text-gray-900'));
+        tr.appendChild(td(item.isbn));
+        tr.appendChild(td(item.edition));
+        tr.appendChild(td(item.languageCode));
+        tr.appendChild(td(item.publicationDate));
+    } else if (entity === 'author') {
+        tr.appendChild(td(id, 'text-gray-500'));
+        tr.appendChild(td(item.displayName, 'font-medium text-gray-900'));
+        tr.appendChild(td(item.givenName));
+        tr.appendChild(td(item.familyName));
+        tr.appendChild(td(item.birthDate));
+    } else if (entity === 'category') {
+        tr.appendChild(td(id, 'text-gray-500'));
+        tr.appendChild(td(item.code, 'font-medium text-gray-900'));
+        tr.appendChild(td(item.name));
+        const descCell = td(item.description);
+        descCell.className += ' max-w-xs truncate';
+        tr.appendChild(descCell);
+        tr.appendChild(td(item.parentCategoryId));
+    }
+
+    // Edit button (programmatic event listener – no inline onclick)
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.className = 'text-indigo-600 hover:text-indigo-800 text-xs font-medium border border-indigo-300 px-2 py-1 rounded';
+    editBtn.addEventListener('click', () => openModal(entity, item));
+
+    // Delete button uses HTMX hx-delete for the HTTP call
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.className = 'text-red-500 hover:text-red-700 text-xs font-medium border border-red-300 px-2 py-1 rounded';
+    deleteBtn.dataset.entity = entity;
+    deleteBtn.setAttribute('hx-delete', '/' + apiPath(entity) + '/' + id);
+    deleteBtn.setAttribute('hx-swap', 'none');
+    deleteBtn.setAttribute('hx-confirm', 'Delete this ' + entity + '?');
+    htmx.process(deleteBtn);
+
+    const actionCell = document.createElement('td');
+    actionCell.className = 'px-4 py-3 flex gap-2';
+    actionCell.appendChild(editBtn);
+    actionCell.appendChild(deleteBtn);
+    tr.appendChild(actionCell);
+    return tr;
+}
+
+// Handle HTMX delete responses globally
+document.body.addEventListener('htmx:afterRequest', function (event) {
+    const btn = event.target;
+    const entity = btn.dataset && btn.dataset.entity;
+    if (!entity) return;
+    if (event.detail.successful) {
+        showToast(capitalize(entity) + ' deleted.');
+        loadData(entity);
+    } else {
+        showToast('Error deleting ' + entity + ' (HTTP ' + event.detail.xhr.status + ')', true);
+    }
+});
+
+// ─── Modal ────────────────────────────────────────────────────────────────────
+
+function openModal(entity, item) {
+    document.getElementById('form-entity-type').value = entity;
+    document.getElementById('form-id').value = item ? (item[idField(entity)] ?? '') : '';
+    document.getElementById('modal-title').textContent = (item ? 'Edit' : 'Add') + ' ' + capitalize(entity);
+    // Build the form structure (no user data in innerHTML), then set values via DOM API
+    document.getElementById('form-fields').innerHTML = buildFormStructure(entity);
+    if (item) setFormValues(entity, item);
+    document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('modal-overlay').classList.add('hidden');
+}
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+document.getElementById('modal-overlay').addEventListener('click', function (e) {
+    if (e.target === this) closeModal();
+});
+
+// Add-button listeners
+['book', 'author', 'category'].forEach(entity => {
+    document.getElementById('add-' + entity).addEventListener('click', () => openModal(entity, null));
+});
+
+/** Builds the form HTML structure with no user-supplied data in attribute values. */
+function buildFormStructure(entity) {
+    const field = (id, label, type, required) => `
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="${id}">
+                ${escapeHtml(label)}${required ? ' <span class="text-red-500">*</span>' : ''}
+            </label>
+            <input id="${id}" name="${id}" type="${type}"
+                   ${required ? 'required' : ''}
+                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm
+                          focus:outline-none focus:ring-2 focus:ring-indigo-400"/>
+        </div>`;
+
+    const textarea = (id, label) => `
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="${id}">${escapeHtml(label)}</label>
+            <textarea id="${id}" name="${id}" rows="3"
+                      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm
+                             focus:outline-none focus:ring-2 focus:ring-indigo-400"></textarea>
+        </div>`;
+
+    if (entity === 'book') {
+        return field('title',           'Title',            'text',   true)
+             + field('isbn',            'ISBN',             'text',   false)
+             + field('subtitle',        'Subtitle',         'text',   false)
+             + field('edition',         'Edition',          'text',   false)
+             + field('languageCode',    'Language Code',    'text',   false)
+             + field('publicationDate', 'Publication Date', 'date',   false)
+             + textarea('description', 'Description');
+    } else if (entity === 'author') {
+        return field('givenName',   'Given Name',   'text', true)
+             + field('familyName',  'Family Name',  'text', false)
+             + field('displayName', 'Display Name', 'text', false)
+             + field('birthDate',   'Birth Date',   'date', false)
+             + field('deathDate',   'Death Date',   'date', false)
+             + textarea('biography', 'Biography');
+    } else if (entity === 'category') {
+        return field('code', 'Code', 'text',   true)
+             + field('name', 'Name', 'text',   true)
+             + field('parentCategoryId', 'Parent Category ID', 'number', false)
+             + textarea('description', 'Description');
+    }
+    return '';
+}
+
+/** Sets form field values from item data using the DOM API (no innerHTML injection). */
+function setFormValues(entity, item) {
+    const setVal = (fieldId, value) => {
+        const el = document.getElementById(fieldId);
+        if (el) el.value = value ?? '';
+    };
+    if (entity === 'book') {
+        setVal('title',           item.title);
+        setVal('isbn',            item.isbn);
+        setVal('subtitle',        item.subtitle);
+        setVal('edition',         item.edition);
+        setVal('languageCode',    item.languageCode);
+        setVal('publicationDate', item.publicationDate);
+        setVal('description',     item.description);
+    } else if (entity === 'author') {
+        setVal('givenName',   item.givenName);
+        setVal('familyName',  item.familyName);
+        setVal('displayName', item.displayName);
+        setVal('birthDate',   item.birthDate);
+        setVal('deathDate',   item.deathDate);
+        setVal('biography',   item.biography);
+    } else if (entity === 'category') {
+        setVal('code',             item.code);
+        setVal('name',             item.name);
+        setVal('parentCategoryId', item.parentCategoryId);
+        setVal('description',      item.description);
+    }
+}
+
+// ─── Form submission (uses fetch for JSON POST/PUT) ───────────────────────────
+
+document.getElementById('modal-form').addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const entity = document.getElementById('form-entity-type').value;
+    const id     = document.getElementById('form-id').value;
+    const form   = document.getElementById('modal-form');
+    const data   = collectFormData(entity, form);
+
+    const url    = id ? ('/' + apiPath(entity) + '/' + id) : ('/' + apiPath(entity));
+    const method = id ? 'PUT' : 'POST';
+
+    try {
+        const res = await fetch(url, {
+            method,
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error('Server error ' + res.status);
+        closeModal();
+        showToast((id ? 'Updated' : 'Created') + ' ' + capitalize(entity) + ' successfully!');
+        loadData(entity);
+    } catch (e) {
+        showToast('Error: ' + e.message, true);
+    }
+});
+
+function collectFormData(entity, form) {
+    const getField = (fieldId) => form.elements[fieldId]?.value?.trim() || null;
+
+    if (entity === 'book') {
+        return {
+            title:           getField('title'),
+            isbn:            getField('isbn'),
+            subtitle:        getField('subtitle'),
+            edition:         getField('edition'),
+            languageCode:    getField('languageCode'),
+            publicationDate: getField('publicationDate') || null,
+            description:     getField('description')
+        };
+    } else if (entity === 'author') {
+        return {
+            givenName:   getField('givenName'),
+            familyName:  getField('familyName'),
+            displayName: getField('displayName'),
+            birthDate:   getField('birthDate')  || null,
+            deathDate:   getField('deathDate')  || null,
+            biography:   getField('biography')
+        };
+    } else if (entity === 'category') {
+        const parentId = getField('parentCategoryId');
+        return {
+            code:             getField('code'),
+            name:             getField('name'),
+            parentCategoryId: parentId ? parseInt(parentId, 10) : null,
+            description:      getField('description')
+        };
+    }
+    return {};
+}
+
+// ─── Toast notifications ──────────────────────────────────────────────────────
+
+function showToast(message, isError) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'fixed bottom-6 right-6 text-white px-5 py-3 rounded-lg shadow-lg text-sm z-50 '
+                    + (isError ? 'bg-red-600' : 'bg-green-600');
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 3500);
+}
+
+// ─── Bootstrap ────────────────────────────────────────────────────────────────
+showTab('book');
+</script>
+</body>
+</html>
